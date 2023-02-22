@@ -1,7 +1,7 @@
 '''
 Author: Alchemistyui
 Date: 2023-02-20
-LastEditTime: 2023-02-21
+LastEditTime: 2023-02-22
 FilePath: /Text2UI_WebLabeler/server/server.py
 Description: 
 
@@ -21,8 +21,8 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit_form():
-    print(request)
-    print(request.get_json())
+    # print(request)
+    # print(request.get_json())
     data = json.dumps(request.get_json())
     with open("/Users/Alchemist/Downloads/Text2UI/web_labeler.jsonl","a") as f:
         f.write(str(data))

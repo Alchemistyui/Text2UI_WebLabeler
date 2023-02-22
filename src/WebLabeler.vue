@@ -1,7 +1,7 @@
 <!--
  * @Author: Alchemistyui
  * @Date: 2023-02-20
- * @LastEditTime: 2023-02-21
+ * @LastEditTime: 2023-02-22
  * @FilePath: /Text2UI_WebLabeler/src/WebLabeler.vue
  * @Description: 
  * 
@@ -13,22 +13,26 @@
         <h1 class="header_title">Annotation Tool</h1>
     </div>
 
+    <p v-if="auto_mode" style="color: #FF60AF; font-size: large; margin: 20px auto; width:700px; text-align: center;">
+        Auto mode is on... <br> Will write desktop & mobile with same annotation once.
+    </p>
+
     <div style="margin: 0 auto; width: 85%;">
         <el-form ref="form" :model="form" label-width="auto">
             <el-form-item label="* File Name" style="text-align: center;">
-                <p class="input_hint">breakfast_01_2.png</p>
+                <p class="input_hint">marlon_profile_01_1.png</p>
                 <el-input v-model="form.file_name" :disabled="formSubmitted" />
             </el-form-item>
             <el-form-item label="* Web Category" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                <p class="input_hint">desktop, restaurant / mobile, restaurant</p>
+                <p class="input_hint">desktop view, personal page <p v-if="!auto_mode">/ mobile view, personal page</p> </p>
                 <el-input v-model="form.category" :disabled="formSubmitted" />
             </el-form-item>
             <el-form-item label="Web Main Color List">
-                <p class="input_hint">black, orange</p>
+                <p class="input_hint">white, blue</p>
                 <el-input v-model="form.color" :disabled="formSubmitted" />
             </el-form-item>
             <!-- full path should be: train_elements + file_name.split('_')[0] + file name +'.png' -->
-            <el-form-item label="* Elements Image Name List">
+            <el-form-item label="Elements Image Name List">
                 <div class="tag-list">
                     <el-tag v-for="tag in form.tags" :key="tag" closable @close="removeTag(tag)">
                     {{ tag }}
@@ -89,18 +93,37 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 
+// used for initial when upload a data
+const initial_val = {
+                file_name: 'marlon_profile_01_1.png',
+                category: 'desktop view, personal page',
+                color: 'white, blue',
+                description: '',
+                // tags: ['logo'],
+                tags: [],
+                tableData: [
+                    { key: 'nav_bar', value: 'Marlon, Home, About, Skills, Work, Contact' },
+                    { key: 'title', value: '' },
+                    { key: 'description', value: '' },
+                    { key: 'button', value: '' }
+                ]
+            }
+const mobile_nav_bar = "Marlon, Menu_icon"
+
 export default {
     name: 'WebLabeler',
     data() {
         return {
+            auto_mode: true,
             form: {
-                file_name: '',
-                category: '',
-                color: '',
+                file_name: 'marlon_profile_01_1.png',
+                category: 'desktop view, personal page',
+                color: 'white, blue',
                 description: '',
-                tags: ['logo'],
+                // tags: ['logo'],
+                tags: [],
                 tableData: [
-                    { key: 'nav_bar', value: 'logo image, home, about, our menu, clients, break, contact button' },
+                    { key: 'nav_bar', value: 'Marlon, Home, About, Skills, Work, Contact' },
                     { key: 'title', value: '' },
                     { key: 'description', value: '' },
                     { key: 'button', value: '' }
@@ -145,7 +168,8 @@ export default {
                     valid_text = false
                 }
             }
-            if (!this.form.file_name || !this.form.category || this.form.tags.length == 0 
+            // remove this.form.tags.length == 0, some may don't have image
+            if (!this.form.file_name || !this.form.category 
                     || !this.form.description || !valid_text) {
                 ElMessage.error('Please fill out all required fields');
                 return false;
@@ -164,7 +188,7 @@ export default {
             }
             
             // console.log(this.form.tags.values());
-            const form_data = {
+            const form_data_desktop = {
                 file_name: this.form.file_name,
                 annos: {
                     category: this.form.category,
@@ -176,27 +200,36 @@ export default {
             }
             // console.log(JSON.stringify(form_data));
 
-            axios.post('http://localhost:8000/submit', form_data)
+            axios.post('http://localhost:8000/submit', form_data_desktop)
+            
+
+            if ("nav_bar" in text_contents) {
+                // delete text_contents.nav_bar
+                text_contents['nav_bar'] = mobile_nav_bar
+            }
+            const form_data_mobile = {
+                file_name: this.form.file_name.replace('_1', '_2'),
+                annos: {
+                    category: this.form.category.replace('desktop', 'mobile'),
+                    main_color: this.form.color,
+                    elements: this.form.tags,
+                    description: this.form.description,
+                    text_contents: text_contents
+                }
+            }
+            // console.log(form_data_desktop)
+            axios.post('http://localhost:8000/submit', form_data_mobile)
                 .then(response => {
                     ElMessage.success('Form submitted successfully');
-                    this.form = {
-                                file_name: '',
-                                category: '',
-                                color: '',
-                                description: '',
-                                tags: ['logo'],
-                                tableData: [
-                                    { key: 'nav_bar', value: 'logo image, home, about, our menu, clients, break, contact button' },
-                                    { key: 'title', value: '' },
-                                    { key: 'description', value: '' },
-                                    { key: 'button', value: '' }
-                                ]
-                            }
+                    // console.log(initial_val)
+                    this.form = initial_val
                 })
                 .catch(error => {
                     ElMessage.error('Form submission failed');
                     console.error(error);
                 });
+            // }
+            
         }
     }
 };
