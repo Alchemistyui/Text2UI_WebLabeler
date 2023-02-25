@@ -1,7 +1,7 @@
 <!--
  * @Author: Alchemistyui
  * @Date: 2023-02-20
- * @LastEditTime: 2023-02-22
+ * @LastEditTime: 2023-02-25
  * @FilePath: /Text2UI_WebLabeler/src/WebLabeler.vue
  * @Description: 
  * 
@@ -24,7 +24,7 @@
                 <el-input v-model="form.file_name" :disabled="formSubmitted" />
             </el-form-item>
             <el-form-item label="* Web Category" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                <p class="input_hint">desktop view, personal page <p v-if="!auto_mode">/ mobile view, personal page</p> </p>
+                <p class="input_hint">desktop view, personal page / functional <p v-if="!auto_mode">/ mobile view, personal page</p> </p>
                 <el-input v-model="form.category" :disabled="formSubmitted" />
             </el-form-item>
             <el-form-item label="Web Main Color List">
@@ -45,7 +45,7 @@
             </el-form-item>
 
             <el-form-item label="* Simple Description">
-                <p class="input_hint"> UI/UX design for a breakfast and restaurant website, landing page</p>
+                <p class="input_hint"> a breakfast and restaurant website, landing page</p>
                 <el-input v-model="form.description" autosize type="textarea" :disabled="formSubmitted" />
             </el-form-item>
 
@@ -95,20 +95,20 @@ import { ElMessage } from 'element-plus';
 
 // used for initial when upload a data
 const initial_val = {
-                file_name: 'marlon_profile_01_1.png',
-                category: 'desktop view, personal page',
-                color: 'white, blue',
+                file_name: 'beats_01_1.png',
+                category: 'desktop view, ecommerce',
+                color: 'black, dark, white',
                 description: '',
-                // tags: ['logo'],
-                tags: [],
+                tags: ['logo'],
+                // tags: [],
                 tableData: [
-                    { key: 'nav_bar', value: 'Marlon, Home, About, Skills, Work, Contact' },
+                    { key: 'nav_bar', value: 'logo image, Home, Specs, Case, Products' },
                     { key: 'title', value: '' },
                     { key: 'description', value: '' },
                     { key: 'button', value: '' }
                 ]
             }
-const mobile_nav_bar = "Marlon, Menu_icon"
+const mobile_nav_bar = "logo image, Menu_icon"
 
 export default {
     name: 'WebLabeler',
@@ -116,14 +116,14 @@ export default {
         return {
             auto_mode: true,
             form: {
-                file_name: 'marlon_profile_01_1.png',
-                category: 'desktop view, personal page',
-                color: 'white, blue',
+                file_name: 'beats_01_1.png',
+                category: 'desktop view, ecommerce',
+                color: 'black, dark, white',
                 description: '',
-                // tags: ['logo'],
-                tags: [],
+                tags: ['logo'],
+                // tags: [],
                 tableData: [
-                    { key: 'nav_bar', value: 'Marlon, Home, About, Skills, Work, Contact' },
+                    { key: 'nav_bar', value: 'logo image, Home, Specs, Case, Products' },
                     { key: 'title', value: '' },
                     { key: 'description', value: '' },
                     { key: 'button', value: '' }
